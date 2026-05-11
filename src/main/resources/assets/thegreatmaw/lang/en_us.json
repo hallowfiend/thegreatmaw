@@ -1,0 +1,11 @@
+{
+  "itemGroup.thegreatmaw": "The Great Maw",
+
+  "thegreatmaw.configuration.title": "Mawfiguration",
+  "thegreatmaw.configuration.section.thegreatmaw.common.toml": "The Great Maw Configs",
+  "thegreatmaw.configuration.section.thegreatmaw.common.toml.title": "The Great Maw Configs",
+
+  "block.thegreatmaw.calcination_crucible": "Calcination Crucible",
+
+  "item.thegreatmaw.salt": "Salt"
+}

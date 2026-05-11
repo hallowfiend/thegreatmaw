@@ -1,0 +1,28 @@
+{
+    "variants": {
+        "facing=north,support=false": {
+            "model": "thegreatmaw:block/calcination_crucible"
+        },
+        "facing=south,support=false": {
+            "model": "thegreatmaw:block/calcination_crucible"
+        },
+        "facing=west,support=false": {
+            "model": "thegreatmaw:block/calcination_crucible"
+        },
+        "facing=east,support=false": {
+            "model": "thegreatmaw:block/calcination_crucible"
+        },
+        "facing=north,support=true": {
+            "model": "thegreatmaw:block/calcination_crucible_tray"
+        },
+        "facing=south,support=true": {
+            "model": "thegreatmaw:block/calcination_crucible_tray"
+        },
+        "facing=west,support=true": {
+            "model": "thegreatmaw:block/calcination_crucible_tray"
+        },
+        "facing=east,support=true": {
+            "model": "thegreatmaw:block/calcination_crucible_tray"
+        }
+    }
+}

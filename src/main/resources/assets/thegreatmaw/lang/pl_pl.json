@@ -1,0 +1,11 @@
+{
+    "itemGroup.thegreatmaw": "Wielka Paszcza",
+
+    "thegreatmaw.configuration.title": "Konfituracja",
+    "thegreatmaw.configuration.section.thegreatmaw.common.toml": "Wielka Paszcza: Konfiguracja",
+    "thegreatmaw.configuration.section.thegreatmaw.common.toml.title": "Wielka Paszcza: Konfiguracja",
+
+    "block.thegreatmaw.calcination_crucible": "Tygielek do kalcynacji",
+
+    "item.thegreatmaw.salt": "Sól"
+}
