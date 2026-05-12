@@ -1,0 +1,12 @@
+{
+  "type": "thegreatmaw:calcinating",
+  "evaporationtime": 200,
+  "fluid": {
+    "amount": 1000,
+    "id": "minecraft:water"
+  },
+  "resultStack": {
+    "count": 1,
+    "id": "thegreatmaw:salt"
+  }
+}
