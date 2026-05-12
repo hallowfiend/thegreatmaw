@@ -1,30 +1,32 @@
 package com.protonmail.hallowfiend.thegreatmaw.common.block.entity;
-import com.protonmail.hallowfiend.thegreatmaw.common.block.CalcinationCrucibleBlock;
 import com.protonmail.hallowfiend.thegreatmaw.common.crafting.CalcinationCrucibleRecipe;
-import com.protonmail.hallowfiend.thegreatmaw.common.util.CalcinationRecipeWrapper;
+import com.protonmail.hallowfiend.thegreatmaw.common.util.AcceptabilityCache;
+import com.protonmail.hallowfiend.thegreatmaw.common.util.recipes.RecipeCaches;
 import com.protonmail.hallowfiend.thegreatmaw.registry.MawRecipeTypes;
 import com.protonmail.hallowfiend.thegreatmaw.registry.ModBlockEntityTypes;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.Clearable;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.cyclops.cyclopscore.fluid.SingleUseTank;
-import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import vectorwing.farmersdelight.common.block.entity.HeatableBlockEntity;
 import vectorwing.farmersdelight.common.block.entity.SyncedBlockEntity;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
 
-import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -35,59 +37,82 @@ public class CalcinationCrucibleBlockEntity extends SyncedBlockEntity implements
 
   private final SingleUseTank tank;
 
-  private CalcinationRecipeWrapper calcinationRecipeWrapper;
+  private boolean searchRecipes = true;
+  private CalcinationCrucibleRecipe currentRecipe;
+  private String currentRecipeIdSynced = "";
+
+  private final Object2IntOpenHashMap<ResourceLocation> usedRecipeTracker;
+
+  private static final AcceptabilityCache<Fluid> fluidCache = new AcceptabilityCache<>();
+
   // vaguely based on the ID drying basin
 
   public CalcinationCrucibleBlockEntity(BlockPos pos, BlockState state) {
     super(ModBlockEntityTypes.CALCINATIONCRUCIBLE.get(), pos, state);
-
     // Create tank
-    this.tank = new SingleUseTank(IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume());
+    this.tank = new SingleUseTank(1000);
+    this.usedRecipeTracker = new Object2IntOpenHashMap<>();
   }
 
-  protected boolean canCook(CalcinationCrucibleBlockEntity crucible) {
+  public static void clearFluidCache() {
+    fluidCache.clear();
+  }
+
+  protected boolean canCook(CalcinationCrucibleRecipe recipe, CalcinationCrucibleBlockEntity crucible) {
     if (!tank.isFull())
       return false;
     if (level == null)
       return false;
+    if (!recipe.matches(crucible.tank.getFluid()))
+      return false; // make sure the fluid is the same
     return crucible.isHeated(level, worldPosition);
   }
 
+  public int genIngredientHash() {
+    return Objects.hash(
+            FluidStack.hashFluidAndComponents(tank.getFluid())
+    );
+  }
+
   public static void calcinationTick(Level level, BlockPos pos, BlockState state, CalcinationCrucibleBlockEntity crucible) {
-    boolean didInventoryChange = false;
     boolean isHeated = crucible.isHeated(level, pos);
-    CalcinationCrucibleRecipe recipe = crucible.getRecipe(level.getRecipeManager().getAllRecipesFor(MawRecipeTypes.CALCINATING.get()), crucible.tank.getFluid());
     if (isHeated && crucible.hasInput()) {
-      if (recipe != null && crucible.canCook(crucible)) {
-        crucible.processCooking(crucible.tank.getFluid(), level);
+      if (crucible.searchRecipes) {
+        RecipeCaches.CALCINATION_CRUCIBLE.getCachedRecipe(crucible::getRecipe, crucible::genIngredientHash).ifPresentOrElse(holder -> {
+          crucible.currentRecipe = holder.value();
+          crucible.usedRecipeTracker.addTo(holder.id(),1);
+          crucible.currentRecipeIdSynced = holder.id().toString();
+        }, () -> {
+          crucible.currentRecipe = null;
+          crucible.usedRecipeTracker.clear();
+          crucible.currentRecipeIdSynced = "";
+        });
+        crucible.searchRecipes = false;
+        if (crucible.currentRecipe.matches(crucible.tank.getFluid()) && crucible.canCook(crucible.currentRecipe, crucible)) {
+          crucible.processCooking(crucible.currentRecipe, level, crucible);
+        }
+        else {
+          crucible.evaporationTime = Math.max(0, crucible.evaporationTime);
+        }
       }
-      else {
-        crucible.evaporationTime = Mth.clamp(crucible.evaporationTime - 2, 0, crucible.evaporationTimeTotal);
-      }
-    }
-    else if (crucible.evaporationTime > 0) {
-      crucible.evaporationTime = Mth.clamp(crucible.evaporationTime - 2, 0, crucible.evaporationTimeTotal);
     }
   }
 
-  private void processCooking(FluidStack fluid, Level level) {
-    assert this.level != null;
-    RecipeManager recipeManager = level.getRecipeManager();
-    List<RecipeHolder<CalcinationCrucibleRecipe>> recipes = recipeManager.getAllRecipesFor(MawRecipeTypes.CALCINATING.get());
-    @Nullable CalcinationCrucibleRecipe recipe = getRecipe(recipes, fluid);
-    if (recipe != null && recipe.getFluidIngredient() == fluid) {
-      ++evaporationTime;
-      evaporationTimeTotal = recipe.getEvaporationTime();
+  private boolean processCooking(CalcinationCrucibleRecipe recipe, Level level, CalcinationCrucibleBlockEntity crucible) {
+    if (level == null)
+      return false;
+
+    ++evaporationTime;
+    evaporationTimeTotal = recipe.getEvaporationTime();
+    if (evaporationTime < evaporationTimeTotal) {
+      setChanged();
+      return false;
     }
-    if (evaporationTime >= evaporationTimeTotal)
-    {
-      if (!canCook(this))
-        return;
+    else {
       ItemStack recipeOutput = null;
-      if (recipe != null) {
-        recipeOutput = recipe.getResultItem();
+      if (recipe.getInputFluid().isPresent()) {
+        recipeOutput = recipe.getOutputItem();
       }
-      evaporationTime = 0;
       Direction direction = Direction.UP;
       // spawn the result
       if (recipeOutput != null) {
@@ -97,21 +122,55 @@ public class CalcinationCrucibleBlockEntity extends SyncedBlockEntity implements
       // make a hiss sound
       level.playSound(null, worldPosition.getX() + 0.5F, worldPosition.getY() + 0.5F, worldPosition.getZ() + 0.5F, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 0.8F, 1.0F);
       // empty the tank
-      tank.reset();
+      crucible.tank.reset();
+      evaporationTime = 0;
     }
+    return true;
   }
 
 
-  private CalcinationCrucibleRecipe getRecipe(List<RecipeHolder<CalcinationCrucibleRecipe>> recipes, FluidStack fluidStack) {
-    for (RecipeHolder<CalcinationCrucibleRecipe> recipeHolder : recipes) {
-      CalcinationCrucibleRecipe recipe = recipeHolder.value();
-      FluidStack fluidStack1 = recipe.getFluidIngredient(); {
-        if (fluidStack == fluidStack1) {
-          return recipe;
-        }
+  private Optional<RecipeHolder<CalcinationCrucibleRecipe>> getRecipe() {
+    for (RecipeHolder<CalcinationCrucibleRecipe> holder : MawRecipeTypes.getRecipes(level, MawRecipeTypes.CALCINATING)) {
+      CalcinationCrucibleRecipe recipe = holder.value();
+      if (recipe.matches(tank.getFluid())) {
+        return Optional.of(holder);
       }
     }
-    return null;
+    return Optional.empty();
+  }
+
+  @Override
+  public void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+    super.saveAdditional(compound, registries);
+    compound.putInt("evaporationTime", evaporationTime);
+    compound.putInt("evaporationTimeTotal", evaporationTimeTotal);
+    compound.putString("currentRecipeIdSynced", currentRecipeIdSynced);
+    CompoundTag compoundRecipes = new CompoundTag();
+    usedRecipeTracker.forEach((recipeId, craftedAmount) -> compoundRecipes.putInt(recipeId.toString(), craftedAmount));
+    compound.put("RecipesUsed", compoundRecipes);
+  }
+
+  @Override
+  public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+    super.loadAdditional(tag, provider);
+
+    currentRecipeIdSynced = tag.getString("currentRecipeIdSynced");
+    evaporationTime = tag.getInt("evaporationTime");
+    evaporationTimeTotal = tag.getInt("evaporationTimeTotal");
+    CompoundTag compoundRecipes = tag.getCompound("RecipesUsed");
+    for (String key : compoundRecipes.getAllKeys()) {
+      usedRecipeTracker.put(ResourceLocation.parse(key), compoundRecipes.getInt(key));
+    }
+  }
+
+  public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+    CompoundTag tag = new CompoundTag();
+    saveAdditional(tag, registries);
+    return tag;
+  }
+
+  public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+    super.handleUpdateTag(tag, registries);
   }
 
   private boolean hasInput () {

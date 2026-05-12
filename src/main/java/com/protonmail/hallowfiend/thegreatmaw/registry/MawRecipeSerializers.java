@@ -12,8 +12,11 @@ import java.util.function.Supplier;
 
 public class MawRecipeSerializers {
 
-  public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZER = DeferredRegister.create(Registries.RECIPE_SERIALIZER, TheGreatMaw.MODID);
+  public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS
+          = DeferredRegister.create(Registries.RECIPE_SERIALIZER, TheGreatMaw.MODID);
 
-  public static final Supplier<RecipeSerializer<?>> CALCINATING = RECIPE_SERIALIZER.register("calcinating", CalcinationCrucibleRecipe.Serializer::new);
+  public static final Supplier<RecipeSerializer<CalcinationCrucibleRecipe>> CALCINATING
+          = RECIPE_SERIALIZERS.register(RecipeTypeStrings.CALCINATING,
+          () -> new CalcinationCrucibleRecipe.Serializer<>(CalcinationCrucibleRecipe::new));
 
 }

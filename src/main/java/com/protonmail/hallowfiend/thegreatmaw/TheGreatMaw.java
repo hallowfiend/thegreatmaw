@@ -37,6 +37,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import com.protonmail.hallowfiend.thegreatmaw.MawHelper;
 
 import java.util.function.Supplier;
 
@@ -66,14 +67,13 @@ public class TheGreatMaw {
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntityTypes.TILES.register(modEventBus);
         MawRecipeTypes.RECIPE_TYPES.register(modEventBus);
-        MawRecipeSerializers.RECIPE_SERIALIZER.register(modEventBus);
+        MawRecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
         CREATIVE_TABS.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (TheGreatMaw) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
-
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

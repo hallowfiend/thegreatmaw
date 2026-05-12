@@ -60,7 +60,7 @@ public class CalcinationCrucibleBlock extends BaseEntityBlock implements SimpleW
   protected static final VoxelShape SHAPE_WITH_TRAY = Shapes.or(SHAPE, Block.box(0.0D, -1.0D, 0.0D, 16.0D, 0.0D, 16.0D));
 
   public CalcinationCrucibleBlock(BlockBehaviour.Properties properties) {
-    super(properties.of()
+    super(Properties.of()
             .mapColor(MapColor.TERRACOTTA_WHITE)
             .requiresCorrectToolForDrops()
             .strength(1.0F));
@@ -135,10 +135,13 @@ public class CalcinationCrucibleBlock extends BaseEntityBlock implements SimpleW
   }
 
   @Nullable
-  public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntity) {
-    if (level.isClientSide())
-      return null;
+  public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntity) {
     return createTickerHelper(blockEntity, ModBlockEntityTypes.CALCINATIONCRUCIBLE.get(), CalcinationCrucibleBlockEntity::calcinationTick);
+  }
+
+  @Nullable
+  protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> serverType, BlockEntityType<E> clientType, BlockEntityTicker<? super E> ticker) {
+    return clientType == serverType ? (BlockEntityTicker<A>) ticker : null;
   }
 
   @Override
@@ -174,6 +177,7 @@ public class CalcinationCrucibleBlock extends BaseEntityBlock implements SimpleW
 
     return state.setValue(SUPPORT, getTrayState(level, pos));
   }
+
 
   @Override
   public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {

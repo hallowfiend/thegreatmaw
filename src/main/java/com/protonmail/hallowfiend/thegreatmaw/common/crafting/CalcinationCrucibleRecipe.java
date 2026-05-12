@@ -1,71 +1,81 @@
 package com.protonmail.hallowfiend.thegreatmaw.common.crafting;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.protonmail.hallowfiend.thegreatmaw.common.util.CalcinationRecipeWrapper;
+import com.protonmail.hallowfiend.thegreatmaw.common.util.DummyRecipeWrapper;
+import com.protonmail.hallowfiend.thegreatmaw.common.util.FluidInputRecipeWrapper;
 import com.protonmail.hallowfiend.thegreatmaw.registry.MawRecipeSerializers;
 import com.protonmail.hallowfiend.thegreatmaw.registry.MawRecipeTypes;
+import com.protonmail.hallowfiend.thegreatmaw.registry.RecipeTypeStrings;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-public class CalcinationCrucibleRecipe implements Recipe<CalcinationRecipeWrapper> {
-  private final FluidStack fluid;
-  private final ItemStack resultStack;
+public class CalcinationCrucibleRecipe extends FluidInputRecipeWrapper {
+  private final Inputs inputs;
+  private final Outputs outputs;
   private final int evaporationTime;
 
-  public CalcinationCrucibleRecipe(FluidStack fluid, ItemStack resultStack, int evaporationTime) {
-    this.fluid = fluid;
-    this.resultStack = resultStack;
+  public CalcinationCrucibleRecipe(
+          Inputs inputs, Outputs outputs, int evaporationTime
+  ) {
+    this.inputs = inputs;
+    this.outputs = outputs;
     this.evaporationTime = evaporationTime;
   }
 
   @Override
-  public boolean matches(CalcinationRecipeWrapper calcinationRecipeWrapper, Level level) {
-    return (this.fluid.getFluid().isSame(calcinationRecipeWrapper.getFluid()));
+  public boolean matches(FluidStack fluidStack) {
+
+    return inputs.inputFluid().map(ingr -> ingr.ingredient().test(fluidStack)).orElse(fluidStack.isEmpty());
   }
 
   @Override
-  public ItemStack assemble(CalcinationRecipeWrapper calcinationRecipeWrapper, HolderLookup.Provider provider) {
-    return this.resultStack.copy();
+  public Optional<SizedFluidIngredient> getInputFluid() {
+    return inputs.inputFluid();
   }
-  public ItemStack assemble() {
-    return assemble(null, null);
+
+  @Override
+  public ItemStack getOutputItem() {
+    return outputs.outputItem();
   }
+
+  public Outputs outputs() {
+    return outputs;
+  }
+
+  public Inputs inputs() {
+    return inputs;
+  }
+
 
   @Override
   public boolean canCraftInDimensions(int i, int i1) {
     return true;
   }
 
-  public FluidStack getFluidIngredient() {
-    return this.fluid;
-  }
-
-  public int getEvaporationTime()
-  {
+  public int getEvaporationTime() {
     return this.evaporationTime;
-  }
-
-  @Override
-  public ItemStack getResultItem(HolderLookup.Provider provider) {
-    return this.resultStack;
-  }
-  public ItemStack getResultItem() {
-    return getResultItem(null);
   }
 
   @Override
@@ -74,43 +84,48 @@ public class CalcinationCrucibleRecipe implements Recipe<CalcinationRecipeWrappe
   }
 
   @Override
-  public @NotNull RecipeType<?> getType() {
-    return MawRecipeTypes.CALCINATING.get();
+  public RecipeType<?> getType() {
+    return (RecipeType<?>) MawRecipeTypes.CALCINATING.get();
   }
 
-  public static class Serializer implements RecipeSerializer<CalcinationCrucibleRecipe> {
-    public static final MapCodec<CalcinationCrucibleRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-            FluidStack.CODEC.fieldOf("fluid").forGetter(CalcinationCrucibleRecipe::getFluidIngredient),
-            ItemStack.STRICT_CODEC.fieldOf("resultStack").forGetter(CalcinationCrucibleRecipe::getResultItem),
-            Codec.INT.fieldOf("evaporationtime").forGetter(CalcinationCrucibleRecipe::getEvaporationTime)
-    ).apply(inst, CalcinationCrucibleRecipe::new));
-    public static final StreamCodec<RegistryFriendlyByteBuf, CalcinationCrucibleRecipe> STREAM_CODEC = StreamCodec.of(CalcinationCrucibleRecipe.Serializer::toNetwork, CalcinationCrucibleRecipe.Serializer::fromNetwork);
+  public interface IFactory <T extends CalcinationCrucibleRecipe> {
+    T create(Inputs inputs, Outputs outputs, int evaporationTime);
+  }
 
+  public static class Serializer<T extends CalcinationCrucibleRecipe> implements RecipeSerializer<T> {
+    private final MapCodec<T> codec;
+    private final StreamCodec<RegistryFriendlyByteBuf, T> streamCodec;
+    public Serializer(IFactory<T> factory) {
+      this.codec = RecordCodecBuilder.<T>mapCodec(inst -> inst.group(
+                      Inputs.CODEC.fieldOf("inputs")
+                              .forGetter(CalcinationCrucibleRecipe::inputs),
+                      Outputs.CODEC.fieldOf("outputs")
+                              .forGetter(CalcinationCrucibleRecipe::outputs),
+                      Codec.INT.optionalFieldOf("evaporationTime", 200)
+                              .forGetter(CalcinationCrucibleRecipe::getEvaporationTime)
+              ).apply(inst, factory::create))
+              .validate(recipe -> recipe.getInputFluid().isPresent() ?
+                      DataResult.success(recipe) :
+                      DataResult.error(() -> "error generating recipe!", recipe)
+              );
 
-    // Return our map codec.
+      this.streamCodec = StreamCodec.composite(
+              Inputs.STREAM_CODEC, CalcinationCrucibleRecipe::inputs,
+              Outputs.STREAM_CODEC, CalcinationCrucibleRecipe::outputs,
+              ByteBufCodecs.INT, CalcinationCrucibleRecipe::getEvaporationTime,
+              factory::create
+      );
+    }
+
     @Override
-    public MapCodec<CalcinationCrucibleRecipe> codec() {
-      return CODEC;
+    public MapCodec<T> codec() {
+      return codec;
     }
 
-    // Return our stream codec.
     @Override
-    public StreamCodec<RegistryFriendlyByteBuf, CalcinationCrucibleRecipe> streamCodec() {
-      return STREAM_CODEC;
-    }
-
-    public static void toNetwork(RegistryFriendlyByteBuf buf, CalcinationCrucibleRecipe recipe) {
-      FluidStack.STREAM_CODEC.encode(buf, recipe.fluid);
-      ItemStack.STREAM_CODEC.encode(buf, recipe.resultStack);
-      buf.writeVarInt(recipe.evaporationTime);
-    }
-
-    public static CalcinationCrucibleRecipe fromNetwork(RegistryFriendlyByteBuf buf) {
-      FluidStack fluid = FluidStack.STREAM_CODEC.decode(buf);
-      ItemStack resultStack = ItemStack.STREAM_CODEC.decode(buf);
-      int evaporationTime = buf.readVarInt();
-
-      return new CalcinationCrucibleRecipe(fluid, resultStack, evaporationTime);
+    public StreamCodec<RegistryFriendlyByteBuf, T> streamCodec() {
+      return streamCodec;
     }
   }
 }
+
