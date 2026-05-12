@@ -8,10 +8,12 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.function.Supplier;
+
 public class MawRecipeSerializers {
 
   public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZER = DeferredRegister.create(Registries.RECIPE_SERIALIZER, TheGreatMaw.MODID);
 
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CalcinationCrucibleRecipe>> CALCINATING = DeferredHolder.create(Registries.RECIPE_SERIALIZER, ResourceLocation.parse("calcinating"));
+  public static final Supplier<RecipeSerializer<?>> CALCINATING = RECIPE_SERIALIZER.register("calcinating", CalcinationCrucibleRecipe.Serializer::new);
 
 }

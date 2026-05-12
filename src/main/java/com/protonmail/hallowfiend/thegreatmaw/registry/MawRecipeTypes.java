@@ -17,6 +17,6 @@ public class MawRecipeTypes {
   public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES =
           DeferredRegister.create(Registries.RECIPE_TYPE, TheGreatMaw.MODID);
 
-  public static final Supplier<RecipeType<CalcinationCrucibleRecipe>> CALCINATING = RECIPE_TYPES.register("calcinating", () -> registerRecipeType("cooking"));
+  public static final Supplier<RecipeType<CalcinationCrucibleRecipe>> CALCINATING = RECIPE_TYPES.register("calcinating", () -> registerRecipeType("calcinating"));
 
 }

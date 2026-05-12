@@ -7,29 +7,26 @@ import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class CalcinationRecipeBuilder implements RecipeBuilder {
-  private Optional<Fluid> fluid;
+  private final FluidStack fluid;
   private final ItemStack resultStack;
   private final int evaporationTime;
   private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
-  private String namespace = "thegreatmaw";
+  @Nullable
+  private String namespace;
 
-  private CalcinationRecipeBuilder(Optional<Fluid> fluid, int evaporationTime, ItemStack resultStack)
+  private CalcinationRecipeBuilder(FluidStack fluid, ItemStack resultStack, int evaporationTime)
   {
     this.fluid = fluid;
     this.evaporationTime = evaporationTime;
@@ -42,13 +39,22 @@ public class CalcinationRecipeBuilder implements RecipeBuilder {
     return this;
   }
 
-  public static CalcinationRecipeBuilder calcinationRecipe(Fluid input, int evaporationTime, ItemStack mainResult) {
-    return new CalcinationRecipeBuilder(Optional.ofNullable(input), evaporationTime, mainResult);
+  public static CalcinationRecipeBuilder calcinationRecipe(FluidStack input, ItemStack mainResult, int evaporationTime) {
+    return new CalcinationRecipeBuilder(input, mainResult, evaporationTime);
   }
 
   @Override
   public RecipeBuilder group(@Nullable String s) {
     return this;
+  }
+
+  public CalcinationRecipeBuilder setNamespace(String namespace) {
+    this.namespace = namespace;
+    return this;
+  }
+
+  public void saveToMaw(RecipeOutput output) {
+    this.setNamespace(TheGreatMaw.MODID).save(output);
   }
 
   @Override
@@ -60,35 +66,15 @@ public class CalcinationRecipeBuilder implements RecipeBuilder {
     ResourceLocation defaultLocation = RecipeBuilder.getDefaultRecipeId(resultStack.getItem());
     save(output, ResourceLocation.fromNamespaceAndPath(this.namespace != null ? namespace : defaultLocation.getNamespace(), defaultLocation.getPath()).withPrefix("calcinating/"));
   }
+
   @Override
   public void save(RecipeOutput output, ResourceLocation id) {
     ResourceLocation recipeId = id;
-    Advancement.Builder advancementBuilder = output.advancement()
-            .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId))
-            .rewards(AdvancementRewards.Builder.recipe(recipeId))
-            .requirements(AdvancementRequirements.Strategy.OR);
-    this.criteria.forEach(advancementBuilder::addCriterion);
     CalcinationCrucibleRecipe recipe = new CalcinationCrucibleRecipe(
             this.fluid,
             this.resultStack,
             this.evaporationTime
     );
-    output.accept(recipeId, recipe, advancementBuilder.build(id.withPrefix("recipes/")));
-  }
-
-  public void build(RecipeOutput consumerIn, String save) {
-    if (resultStack == null)
-      throw new NullPointerException("Calcination Recipe does not specify a result.");
-
-    if (!resultStack.isEmpty()) {
-      if (fluid.isPresent()) {
-        ResourceLocation baseFluidLocation = BuiltInRegistries.FLUID.getKey(fluid.get());
-        ResourceLocation resultItemLocation = BuiltInRegistries.ITEM.getKey(resultStack.getItem());
-        build(consumerIn, TheGreatMaw.MODID + ":calcination/" + resultItemLocation.getPath() + "_from_" + baseFluidLocation.getPath());
-        return;
-      }
-      ResourceLocation resultItemLocation = BuiltInRegistries.ITEM.getKey(resultStack.getItem());
-      build(consumerIn, TheGreatMaw.MODID + ":calcination/" + resultItemLocation.getPath());
-    }
+    output.accept(recipeId, recipe, null);
   }
 }

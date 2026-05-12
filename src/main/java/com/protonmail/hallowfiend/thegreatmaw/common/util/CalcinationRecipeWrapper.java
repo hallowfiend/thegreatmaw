@@ -7,12 +7,12 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 
 public interface CalcinationRecipeWrapper extends RecipeInput {
-  FluidStack getFluid();
+  Fluid getFluid();
   long getTankCapacity();
 
   @Override
   default boolean isEmpty() {
-    if (getFluid().isEmpty())
+    if (getFluid() != null)
       return false;
     return RecipeInput.super.isEmpty();
   }
