@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "p": {
+      "item": "thegreatmaw:unfired_porcelain"
+    }
+  },
+  "pattern": [
+    "p p",
+    "p p",
+    "ppp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "thegreatmaw:unfired_calcination_crucible"
+  }
+}

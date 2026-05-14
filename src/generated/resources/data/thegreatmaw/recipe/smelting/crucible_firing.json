@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "cookingtime": 300,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "thegreatmaw:unfired_calcination_crucible"
+  },
+  "result": {
+    "count": 1,
+    "id": "thegreatmaw:calcination_crucible"
+  }
+}
