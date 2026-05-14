@@ -6,6 +6,8 @@
   "thegreatmaw.configuration.section.thegreatmaw.common.toml.title": "The Great Maw Configs",
 
   "block.thegreatmaw.calcination_crucible": "Calcination Crucible",
+  "item.thegreatmaw.unfired_calcination_crucible": "Unfired Calcination Crucible",
 
-  "item.thegreatmaw.salt": "Salt"
+  "item.thegreatmaw.salt": "Salt",
+  "item.thegreatmaw.unfired_porcelain": "Unfired Porcelain Ball"
 }

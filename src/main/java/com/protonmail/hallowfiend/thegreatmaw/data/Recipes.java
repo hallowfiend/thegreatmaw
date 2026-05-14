@@ -6,6 +6,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import com.protonmail.hallowfiend.thegreatmaw.data.CalcinationRecipes;
+import vectorwing.farmersdelight.data.recipe.CraftingRecipes;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.concurrent.CompletableFuture;
@@ -20,7 +21,7 @@ public class Recipes extends RecipeProvider
 
   @Override
   protected void buildRecipes(RecipeOutput output) {
-    CalcinationRecipes.register(output);
-
+    MawCraftingRecipes.register(output);
+    MawSmeltingRecipes.register(output);
   }
 }

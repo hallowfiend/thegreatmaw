@@ -7,5 +7,7 @@
 
     "block.thegreatmaw.calcination_crucible": "Tygielek do kalcynacji",
 
-    "item.thegreatmaw.salt": "Sól"
+    "item.thegreatmaw.salt": "Sól",
+    "item.thegreatmaw.unfired_calcination_crucible": "Niewypalony tygielek do kalcynacji",
+    "item.thegreatmaw.unfired_porcelain": "Kawałek niewypalonej porcelany"
 }

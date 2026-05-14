@@ -2,9 +2,13 @@ package com.protonmail.hallowfiend.thegreatmaw.common.block;
 
 import com.mojang.serialization.MapCodec;
 import com.protonmail.hallowfiend.thegreatmaw.common.block.entity.CalcinationCrucibleBlockEntity;
+import com.protonmail.hallowfiend.thegreatmaw.common.crafting.CalcinationCrucibleRecipe;
 import com.protonmail.hallowfiend.thegreatmaw.registry.ModBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -32,15 +36,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.fluids.FluidActionResult;
-import net.neoforged.neoforge.fluids.FluidUtil;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import org.cyclops.cyclopscore.Capabilities;
-import org.cyclops.cyclopscore.fluid.SingleUseTank;
-import org.cyclops.cyclopscore.helper.IFluidHelpersNeoForge;
-import org.cyclops.cyclopscore.helper.IModHelpers;
-import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import vectorwing.farmersdelight.common.block.state.CookingPotSupport;
@@ -53,7 +51,7 @@ public class CalcinationCrucibleBlock extends BaseEntityBlock implements SimpleW
   public static final MapCodec<CalcinationCrucibleBlock> CODEC = simpleCodec(CalcinationCrucibleBlock::new);
 
   public static final BooleanProperty SUPPORT = BooleanProperty.create("support");
-  public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+  public static final BooleanProperty FULL = BooleanProperty.create("full");
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
   protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 10.0D, 12.0D);
@@ -65,42 +63,30 @@ public class CalcinationCrucibleBlock extends BaseEntityBlock implements SimpleW
             .requiresCorrectToolForDrops()
             .strength(1.0F));
 
-    this.registerDefaultState(this.stateDefinition.any().setValue(SUPPORT, false).setValue(WATERLOGGED, false));
+    this.registerDefaultState(this.stateDefinition.any()
+            .setValue(SUPPORT, false)
+            .setValue(WATERLOGGED, false)
+            .setValue(FULL, false));
   }
 
   @Override
-  public InteractionResult useWithoutItem(BlockState blockState, Level world, BlockPos blockPos, Player player,
-          BlockHitResult rayTraceResult) {
-    return IModHelpers.get().getBlockEntityHelpers().get(world, blockPos, CalcinationCrucibleBlockEntity.class)
-            .map(tile -> {
-              ItemStack itemStack = player.getInventory().getSelected();
-              IFluidHandler itemFluidHandler = FluidUtil.getFluidHandler(itemStack).orElse(null);
-              SingleUseTank tank = tile.getTank();
-
-              if (itemStack.isEmpty()) {
-                return InteractionResult.PASS;
-                }
-              else if (itemFluidHandler != null && !tank.isFull()
-                      && !itemFluidHandler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE).isEmpty()) {
-                FluidActionResult fluidAction = FluidUtil.tryEmptyContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
-                if (fluidAction.isSuccess()) {
-                  ItemStack newItemStack = fluidAction.getResult();
-                  IModHelpers.get().getInventoryHelpers().tryReAddToStack(player, itemStack, newItemStack, player.getUsedItemHand());
-                  world.gameEvent(player, GameEvent.BLOCK_CHANGE, blockPos);
-                }
-                return InteractionResult.SUCCESS;
-              } else if (itemFluidHandler != null && !tank.isEmpty() &&
-                      itemFluidHandler.fill(tank.getFluid(), IFluidHandler.FluidAction.SIMULATE) > 0) {
-                FluidActionResult fluidAction = FluidUtil.tryFillContainer(itemStack, tank, Integer.MAX_VALUE, player, true);
-                if (fluidAction.isSuccess()) {
-                  ItemStack newItemStack = fluidAction.getResult();
-                  IModHelpers.get().getInventoryHelpers().tryReAddToStack(player, itemStack, newItemStack, player.getUsedItemHand());
-                }
-                return InteractionResult.SUCCESS;
+  public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
+    if (pLevel.getBlockEntity(pPos) instanceof CalcinationCrucibleBlockEntity crucible) {
+      InteractionHand pHand = pPlayer.getUsedItemHand();
+      ItemStack stack = pPlayer.getItemInHand(pHand);
+      var bucket = stack.getCapability(Capabilities.FluidHandler.ITEM);
+      if (bucket != null) {
+        if (bucket.getFluidInTank(1).getFluid() == Fluids.WATER) {
+          if (!pLevel.isClientSide) {
+            bucket.drain(1000, IFluidHandler.FluidAction.EXECUTE);
+            pLevel.setBlockAndUpdate(pPos, pState.setValue(FULL, true));
+            pLevel.playSound(null, pPos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
               }
-              return InteractionResult.PASS;
-            })
-            .orElse(InteractionResult.PASS);
+            }
+          }
+          return InteractionResult.sidedSuccess(pLevel.isClientSide);
+        }
+      return super.useWithoutItem(pState, pLevel, pPos, pPlayer, pHit);
   }
 
   @SuppressWarnings("deprecation")
@@ -147,7 +133,7 @@ public class CalcinationCrucibleBlock extends BaseEntityBlock implements SimpleW
   @Override
   protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
     super.createBlockStateDefinition(builder);
-    builder.add(FACING, SUPPORT, WATERLOGGED);
+    builder.add(SUPPORT, WATERLOGGED, FULL);
   }
 
   @Override
@@ -172,7 +158,7 @@ public class CalcinationCrucibleBlock extends BaseEntityBlock implements SimpleW
     FluidState fluid = level.getFluidState(context.getClickedPos());
 
     BlockState state = this.defaultBlockState()
-            .setValue(FACING, context.getHorizontalDirection().getOpposite())
+            .setValue(FULL, false)
             .setValue(WATERLOGGED, fluid.getType() == Fluids.WATER);
 
     return state.setValue(SUPPORT, getTrayState(level, pos));

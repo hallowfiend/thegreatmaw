@@ -16,5 +16,7 @@ public class ModBlockEntityTypes {
   public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, TheGreatMaw.MODID);
 
   public static final Supplier<BlockEntityType<CalcinationCrucibleBlockEntity>> CALCINATIONCRUCIBLE = TILES.register("calcination_crucible",
-          () -> BlockEntityType.Builder.of(CalcinationCrucibleBlockEntity::new, ModBlocks.CALCINATIONCRUCIBLE.get()).build(null));
+          () -> BlockEntityType.Builder
+                  .of(CalcinationCrucibleBlockEntity::new, ModBlocks.CALCINATIONCRUCIBLE.get())
+                  .build(null));
 }

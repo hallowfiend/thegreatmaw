@@ -94,7 +94,6 @@ public class AbstractedRecipeType<T extends DummyRecipeWrapper> implements Recip
         mawType.cachedRecipes.clear();
       }
     }
-    CalcinationCrucibleBlockEntity.clearFluidCache();
     RecipeCaches.clearAll();
   }
 

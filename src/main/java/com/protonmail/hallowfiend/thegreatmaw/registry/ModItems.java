@@ -24,6 +24,10 @@ public class ModItems {
   }
   // crafting materials
   public static final Supplier<Item> SALT = registerWithTab("salt", () -> new Item(basicItem()));
+  // porcelain
+  public static final Supplier<Item> UNFIRED_PORCELAIN = registerWithTab("unfired_porcelain", () -> new Item(basicItem()));
+  public static final Supplier<Item> UNFIRED_CALCINATIONCRUCIBLE = registerWithTab("unfired_calcination_crucible", () -> new Item(basicItem()));
+  public static final Supplier<Item> PORCELAIN_BRICK = registerWithTab("porcelain_brick", () -> new Item(basicItem()));
   // block items
   public static final Supplier<Item> CALCINATIONCRUCIBLE = registerWithTab("calcination_crucible",
           () -> new BlockItem(ModBlocks.CALCINATIONCRUCIBLE.get(), basicItem()));

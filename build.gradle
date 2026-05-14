@@ -143,7 +143,6 @@ dependencies {
 
     compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
     runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
-    implementation("curse.maven:cyclopscore-232758:${cyclopscore_version}")
     implementation("com.klikli_dev:modonomicon-${minecraft_version}-neoforge:${modonomicon_version}"){transitive=false}
     implementation("curse.maven:farmers-delight-398521:8007613")
     implementation("curse.maven:miners-delight-plus-689630:8011049")
