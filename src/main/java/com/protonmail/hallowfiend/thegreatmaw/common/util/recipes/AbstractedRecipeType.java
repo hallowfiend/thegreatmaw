@@ -1,21 +1,13 @@
 package com.protonmail.hallowfiend.thegreatmaw.common.util.recipes;
 
 import com.protonmail.hallowfiend.thegreatmaw.MawHelper;
-import com.protonmail.hallowfiend.thegreatmaw.TheGreatMaw;
-import com.protonmail.hallowfiend.thegreatmaw.common.block.CalcinationCrucibleBlock;
-import com.protonmail.hallowfiend.thegreatmaw.common.block.entity.CalcinationCrucibleBlockEntity;
-import com.protonmail.hallowfiend.thegreatmaw.common.crafting.CalcinationCrucibleRecipe;
 import com.protonmail.hallowfiend.thegreatmaw.common.util.DummyRecipeWrapper;
-import com.protonmail.hallowfiend.thegreatmaw.data.CalcinationRecipes;
 import com.protonmail.hallowfiend.thegreatmaw.registry.MawRecipeTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -27,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 

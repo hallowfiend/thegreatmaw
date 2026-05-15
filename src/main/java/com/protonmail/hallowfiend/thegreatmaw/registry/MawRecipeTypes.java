@@ -3,23 +3,16 @@ package com.protonmail.hallowfiend.thegreatmaw.registry;
 import com.protonmail.hallowfiend.thegreatmaw.TheGreatMaw;
 import com.protonmail.hallowfiend.thegreatmaw.common.crafting.CalcinationCrucibleRecipe;
 import com.protonmail.hallowfiend.thegreatmaw.common.util.DummyRecipeWrapper;
-import com.protonmail.hallowfiend.thegreatmaw.common.util.FluidInputRecipeWrapper;
 import com.protonmail.hallowfiend.thegreatmaw.common.util.recipes.AbstractedRecipeType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import static vectorwing.farmersdelight.common.registry.ModRecipeTypes.registerRecipeType;
 
 public class MawRecipeTypes {
 

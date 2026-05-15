@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_porcelain_brick": {
+      "conditions": {
+        "items": [
+          {
+            "items": "thegreatmaw:porcelain_brick"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "thegreatmaw:shaped/porcelain_bricks"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_porcelain_brick"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "thegreatmaw:shaped/porcelain_bricks"
+    ]
+  }
+}

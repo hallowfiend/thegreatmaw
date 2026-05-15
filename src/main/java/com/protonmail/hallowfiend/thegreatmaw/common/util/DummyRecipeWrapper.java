@@ -9,6 +9,7 @@ import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.Level;
+
 import java.util.List;
 
 public abstract class DummyRecipeWrapper implements CraftingRecipe {

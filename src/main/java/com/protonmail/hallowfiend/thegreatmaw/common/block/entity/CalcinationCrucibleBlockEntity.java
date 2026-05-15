@@ -1,32 +1,20 @@
 package com.protonmail.hallowfiend.thegreatmaw.common.block.entity;
-import com.protonmail.hallowfiend.thegreatmaw.common.block.CalcinationCrucibleBlock;
-import com.protonmail.hallowfiend.thegreatmaw.common.crafting.CalcinationCrucibleRecipe;
-import com.protonmail.hallowfiend.thegreatmaw.common.util.AcceptabilityCache;
-import com.protonmail.hallowfiend.thegreatmaw.registry.MawRecipeTypes;
+
 import com.protonmail.hallowfiend.thegreatmaw.registry.ModBlockEntityTypes;
-import com.protonmail.hallowfiend.thegreatmaw.registry.ModBlocks;
 import com.protonmail.hallowfiend.thegreatmaw.registry.ModItems;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.fluids.FluidStack;
 import vectorwing.farmersdelight.common.block.entity.HeatableBlockEntity;
 import vectorwing.farmersdelight.common.block.entity.SyncedBlockEntity;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
-
-import java.util.Objects;
-import java.util.Optional;
 
 import static com.protonmail.hallowfiend.thegreatmaw.common.block.CalcinationCrucibleBlock.FULL;
 

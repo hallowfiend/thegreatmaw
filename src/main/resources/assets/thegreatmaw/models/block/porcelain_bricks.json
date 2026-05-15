@@ -1,0 +1,6 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "all": "thegreatmaw:block/porcelain_bricks"
+    }
+}

@@ -28,7 +28,10 @@ public class ModItems {
   public static final Supplier<Item> UNFIRED_PORCELAIN = registerWithTab("unfired_porcelain", () -> new Item(basicItem()));
   public static final Supplier<Item> UNFIRED_CALCINATIONCRUCIBLE = registerWithTab("unfired_calcination_crucible", () -> new Item(basicItem()));
   public static final Supplier<Item> PORCELAIN_BRICK = registerWithTab("porcelain_brick", () -> new Item(basicItem()));
-  // block items
+  public static final Supplier<Item> PORCELAIN_BRICKS = registerWithTab("porcelain_bricks",
+          () -> new BlockItem(ModBlocks.PORCELAIN_BRICKS.get(), basicItem()));
+  public static final Supplier<Item> PORCELAIN_BRICK_SLAB = registerWithTab("porcelain_brick_slab",
+          () -> new BlockItem(ModBlocks.PORCELAIN_BRICK_SLAB.get(), basicItem()));
   public static final Supplier<Item> CALCINATIONCRUCIBLE = registerWithTab("calcination_crucible",
           () -> new BlockItem(ModBlocks.CALCINATIONCRUCIBLE.get(), basicItem()));
 

@@ -1,13 +1,10 @@
 package com.protonmail.hallowfiend.thegreatmaw.registry;
 
 import com.protonmail.hallowfiend.thegreatmaw.TheGreatMaw;
-import com.protonmail.hallowfiend.thegreatmaw.common.block.entity.*;
-import net.minecraft.core.BlockPos;
+import com.protonmail.hallowfiend.thegreatmaw.common.block.entity.CalcinationCrucibleBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.function.Supplier;
 
