@@ -10,5 +10,25 @@
     "item.thegreatmaw.salt": "Sól",
     "item.thegreatmaw.unfired_calcination_crucible": "Niewypalony tygielek do kalcynacji",
     "item.thegreatmaw.unfired_porcelain": "Kawałek niewypalonej porcelany",
-    "item.thegreatmaw.porcelain_brick": "Cegła porcelanowa"
+    "item.thegreatmaw.porcelain_brick": "Cegła porcelanowa",
+
+    "block.thegreatmaw.porcelain_bricks": "Porcelanowe cegły",
+    "block.thegreatmaw.porcelain_brick_slab": "Porcelanowa płyta",
+    "block.thegreatmaw.porcelain_brick_stairs": "Porcelanowe schody",
+    "block.thegreatmaw.white_small_porcelain_bricks": "Białe porcelanowe cegiełki",
+    "block.thegreatmaw.light_gray_small_porcelain_bricks": "Jasnoszare porcelanowe ciegiełki",
+    "block.thegreatmaw.gray_small_porcelain_bricks": "Szare porcelanowe cegiełki",
+    "block.thegreatmaw.black_small_porcelain_bricks": "Czarne porcelanowe cegiełki",
+    "block.thegreatmaw.red_small_porcelain_bricks": "Czerwone porcelanowe cegiełki",
+    "block.thegreatmaw.orange_small_porcelain_bricks": "Pomarańczowe porcelanowe cegiełki",
+    "block.thegreatmaw.yellow_small_porcelain_bricks": "Żółte porcelanowe cegiełki",
+    "block.thegreatmaw.lime_small_porcelain_bricks": "Jasnozielone porcelanowe cegiełki",
+    "block.thegreatmaw.green_small_porcelain_bricks": "Zielone porcelanowe cegiełki",
+    "block.thegreatmaw.cyan_small_porcelain_bricks": "Błękitne porcelanowe cegiełki",
+    "block.thegreatmaw.light_blue_small_porcelain_bricks": "Jasnoniebieskie porcelanowe cegiełki",
+    "block.thegreatmaw.blue_small_porcelain_bricks": "Niebieskie porcelanowe cegiełki",
+    "block.thegreatmaw.purple_small_porcelain_bricks": "Fioletowe porcelanowe cegiełki",
+    "block.thegreatmaw.magenta_small_porcelain_bricks": "Karmazynowe porcelanowe cegiełki",
+    "block.thegreatmaw.pink_small_porcelain_bricks": "Różowe porcelanowe cegiełki",
+    "block.thegreatmaw.brown_small_porcelain_bricks": "Brązowe porcelanowe cegiełki"
 }

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "layer0": "thegreatmaw:block/red_small_porcelain_bricks"
+    "all": "thegreatmaw:block/red_small_porcelain_bricks"
   }
 }

@@ -56,17 +56,12 @@ public class BlockModelDatagen extends BlockModelProvider {
             ModBlocks.MAGENTA_SMALL_PORCELAIN_BRICKS.get(),
             ModBlocks.PINK_SMALL_PORCELAIN_BRICKS.get()
     );
-    takeAll(blocks, cubeAll.toArray(new Block[0])).forEach(block -> cubeAllModel(block, resourceBlock(blockName(block))));
+    takeAll(blocks, cubeAll.toArray(new Block[0])).forEach(block -> cubeAll(blockName(block), resourceBlock(blockName(block))));
   }
 
   private String blockName(Block block) {
     return BuiltInRegistries.BLOCK.getKey(block).getPath();
   }
-
-  public void cubeAllModel(Block block, ResourceLocation texture) {
-    withExistingParent(blockName(block), CUBEALL).texture("layer0", texture);
-  }
-
   public ResourceLocation resourceBlock(String path) {
     return ResourceLocation.fromNamespaceAndPath(TheGreatMaw.MODID, "block/" + path);
   }
