@@ -22,5 +22,6 @@ public class Recipes extends RecipeProvider
     MawCraftingRecipes.register(output);
     MawSmeltingRecipes.register(output);
     MawStonecuttingRecipes.register(output);
+    MawCuttingRecipes.register(output);
   }
 }

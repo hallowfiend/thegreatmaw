@@ -1,6 +1,7 @@
 package com.protonmail.hallowfiend.thegreatmaw.data;
 
 import com.protonmail.hallowfiend.thegreatmaw.TheGreatMaw;
+import com.protonmail.hallowfiend.thegreatmaw.registry.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.DataGenerator;
@@ -26,6 +27,14 @@ public class DataGenerators {
     DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), registrySetBuilder, Set.of(TheGreatMaw.MODID));
     CompletableFuture<HolderLookup.Provider> lookupProvider = datapackProvider.getRegistryProvider();
     generator.addProvider(event.includeServer(), new Recipes(output, lookupProvider));
+    MawBlockTags blockTags = new MawBlockTags(output, lookupProvider, helper);
+    generator.addProvider(event.includeServer(), blockTags);
+    generator.addProvider(event.includeServer(), new MawItemTags(output, lookupProvider, blockTags.contentsGetter(), helper));
+
+    BlockStateDatagen blockStates = new BlockStateDatagen(output, helper);
+    generator.addProvider(event.includeClient(), blockStates);
+    generator.addProvider(event.includeClient(), new BlockModelDatagen(output, helper));
+    generator.addProvider(event.includeClient(), new ItemModelDatagen(output, blockStates.models().existingFileHelper));
   }
 
 }

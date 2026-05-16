@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "d": {
+      "tag": "c:dyes/orange"
+    },
+    "p": {
+      "tag": "thegreatmaw:small_porcelain_bricks"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "pdp",
+    "ppp"
+  ],
+  "result": {
+    "count": 8,
+    "id": "thegreatmaw:orange_small_porcelain_bricks"
+  }
+}

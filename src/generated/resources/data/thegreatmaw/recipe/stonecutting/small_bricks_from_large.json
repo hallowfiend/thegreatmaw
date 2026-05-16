@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "thegreatmaw:porcelain_bricks"
+  },
+  "result": {
+    "count": 1,
+    "id": "thegreatmaw:white_small_porcelain_bricks"
+  }
+}

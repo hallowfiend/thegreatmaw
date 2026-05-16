@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "p": {
+      "item": "thegreatmaw:porcelain_bricks"
+    }
+  },
+  "pattern": [
+    "pp ",
+    "pp "
+  ],
+  "result": {
+    "count": 4,
+    "id": "thegreatmaw:white_small_porcelain_bricks"
+  }
+}

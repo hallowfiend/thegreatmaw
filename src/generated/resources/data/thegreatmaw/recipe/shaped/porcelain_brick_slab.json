@@ -2,12 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "p": {
+    "b": {
       "item": "thegreatmaw:porcelain_bricks"
     }
   },
   "pattern": [
-    "ppp"
+    "bbb"
   ],
   "result": {
     "count": 6,

@@ -19,6 +19,10 @@ public class MawStonecuttingRecipes {
             .stonecutting(Ingredient.of(ModItems.PORCELAIN_BRICKS.get()), RecipeCategory.BUILDING_BLOCKS, ModItems.PORCELAIN_BRICK_SLAB.get(), 2)
             .unlockedBy("has_porcelain_bricks", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PORCELAIN_BRICKS.get()))
             .save(output, MawHelper.RL("stonecutting/porcelain_brick_slab"));
+    SingleItemRecipeBuilder
+            .stonecutting(Ingredient.of(ModItems.PORCELAIN_BRICKS.get()), RecipeCategory.BUILDING_BLOCKS, ModItems.WHITE_SMALL_PORCELAIN_BRICKS.get(), 1)
+            .unlockedBy("has_porcelain_bricks", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PORCELAIN_BRICKS.get()))
+            .save(output, MawHelper.RL("stonecutting/small_bricks_from_large"));
   }
 
 }

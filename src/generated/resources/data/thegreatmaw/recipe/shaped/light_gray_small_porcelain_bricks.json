@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "d": {
+      "tag": "c:dyes/light_gray"
+    },
+    "p": {
+      "tag": "thegreatmaw:small_porcelain_bricks"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "pdp",
+    "ppp"
+  ],
+  "result": {
+    "count": 8,
+    "id": "thegreatmaw:light_gray_small_porcelain_bricks"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "thegreatmaw:block/porcelain_bricks",
+    "top": "thegreatmaw:block/porcelain_bricks",
+    "side": "thegreatmaw:block/porcelain_bricks"
+  }
+}

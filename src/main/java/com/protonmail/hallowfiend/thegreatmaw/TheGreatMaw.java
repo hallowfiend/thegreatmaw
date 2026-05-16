@@ -6,6 +6,7 @@ import com.protonmail.hallowfiend.thegreatmaw.registry.MawRecipeTypes;
 import com.protonmail.hallowfiend.thegreatmaw.registry.ModBlockEntityTypes;
 import com.protonmail.hallowfiend.thegreatmaw.registry.ModBlocks;
 import com.protonmail.hallowfiend.thegreatmaw.registry.ModItems;
+import com.protonmail.hallowfiend.thegreatmaw.registry.ModTags;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
